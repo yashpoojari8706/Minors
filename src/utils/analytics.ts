@@ -170,3 +170,6 @@ export const trackScreenView = (screenName: string, screenClass?: string) =>
 
 export const trackUserAction = (action: string, target?: string, value?: number) => 
   analytics.trackUserAction(action, target, value);
+
+export const trackLogin = (method: string, role: string) => 
+  analytics.trackLogin(method, role);

@@ -1,6 +1,8 @@
 import React from 'react';
+import { View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Ionicons } from '@expo/vector-icons';
 import { SafetyDashboard, ProfileScreen, ReportHazardScreen } from '../screens';
 import { NAVIGATION_ROUTES } from '../config';
 
@@ -9,27 +11,27 @@ const Stack = createNativeStackNavigator();
 
 // Placeholder screens for safety officer-specific features
 const SafetyReportsScreen = () => (
-  <div style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <h2>Safety Reports - Coming Soon</h2>
-  </div>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Safety Reports - Coming Soon</Text>
+  </View>
 );
 
 const SafetyAlertsScreen = () => (
-  <div style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <h2>Safety Alerts - Coming Soon</h2>
-  </div>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Safety Alerts - Coming Soon</Text>
+  </View>
 );
 
 const BroadcastScreen = () => (
-  <div style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <h2>Broadcast Alert - Coming Soon</h2>
-  </div>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Broadcast Alert - Coming Soon</Text>
+  </View>
 );
 
 const VideosScreen = () => (
-  <div style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <h2>Videos Screen - Coming Soon</h2>
-  </div>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Videos Screen - Coming Soon</Text>
+  </View>
 );
 
 const SafetyTabNavigator = () => {
@@ -46,7 +48,7 @@ const SafetyTabNavigator = () => {
         component={SafetyDashboard}
         options={{
           tabBarLabel: 'Dashboard',
-          tabBarIcon: ({ color }) => <span style={{ color }}>🏠</span>,
+          tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,
         }}
       />
       <Tab.Screen
@@ -54,7 +56,7 @@ const SafetyTabNavigator = () => {
         component={SafetyReportsScreen}
         options={{
           tabBarLabel: 'Reports',
-          tabBarIcon: ({ color }) => <span style={{ color }}>📊</span>,
+          tabBarIcon: ({ color, size }) => <Ionicons name="document-text" size={size} color={color} />,
         }}
       />
       <Tab.Screen
@@ -62,7 +64,7 @@ const SafetyTabNavigator = () => {
         component={VideosScreen}
         options={{
           tabBarLabel: 'Videos',
-          tabBarIcon: ({ color }) => <span style={{ color }}>🎥</span>,
+          tabBarIcon: ({ color, size }) => <Ionicons name="play-circle" size={size} color={color} />,
         }}
       />
       <Tab.Screen
@@ -70,13 +72,12 @@ const SafetyTabNavigator = () => {
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color }) => <span style={{ color }}>👤</span>,
+          tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
         }}
       />
     </Tab.Navigator>
   );
 };
-
 export const SafetyNavigator = () => {
   return (
     <Stack.Navigator>

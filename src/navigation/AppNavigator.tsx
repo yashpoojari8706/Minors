@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuthMock } from '../hooks';
@@ -19,7 +19,17 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({
   linking, 
   onReady 
 }) => {
-  const { isAuthenticated, isLoading } = useAuthMock();
+  const authData = useAuthMock();
+  const { isAuthenticated, isLoading, user } = authData;
+  const [forceUpdate, setForceUpdate] = useState(0);
+  
+  console.log('AppNavigator render - isAuthenticated:', isAuthenticated, 'isLoading:', isLoading, 'user:', user?.name);
+  
+  useEffect(() => {
+    console.log('AppNavigator useEffect - Auth state changed:', { isAuthenticated, isLoading, user: user?.name });
+    // Force a re-render when auth state changes
+    setForceUpdate(prev => prev + 1);
+  }, [isAuthenticated, isLoading, user]);
 
   const handleNavigationStateChange = (state: any) => {
     // Track screen views automatically
@@ -57,12 +67,12 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({
       onReady={onReady}
       onStateChange={handleNavigationStateChange}
     >
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {isAuthenticated ? (
-          <Stack.Screen name="Main" component={RoleBasedNavigator} />
-        ) : (
-          <Stack.Screen name="Auth" component={AuthNavigator} />
-        )}
+      <Stack.Navigator 
+        screenOptions={{ headerShown: false }}
+        initialRouteName={isAuthenticated ? "Main" : "Auth"}
+      >
+        <Stack.Screen name="Auth" component={AuthNavigator} />
+        <Stack.Screen name="Main" component={RoleBasedNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );

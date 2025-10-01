@@ -1,24 +1,25 @@
 import React from 'react';
+import { View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Ionicons } from '@expo/vector-icons';
 import { WorkerDashboard, ProfileScreen, ReportHazardScreen } from '../screens';
 import { NAVIGATION_ROUTES } from '../config';
-import { useAuthMock } from '../hooks';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 // Placeholder screens for tabs
 const VideosScreen = () => (
-  <div style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <h2>Videos Screen - Coming Soon</h2>
-  </div>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Videos Screen - Coming Soon</Text>
+  </View>
 );
 
 const ReportsScreen = () => (
-  <div style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <h2>Reports Screen - Coming Soon</h2>
-  </div>
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Reports Screen - Coming Soon</Text>
+  </View>
 );
 
 const WorkerTabNavigator = () => {
@@ -35,7 +36,7 @@ const WorkerTabNavigator = () => {
         component={WorkerDashboard}
         options={{
           tabBarLabel: 'Dashboard',
-          tabBarIcon: ({ color }) => <span style={{ color }}>🏠</span>,
+          tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,
         }}
       />
       <Tab.Screen
@@ -43,7 +44,7 @@ const WorkerTabNavigator = () => {
         component={VideosScreen}
         options={{
           tabBarLabel: 'Videos',
-          tabBarIcon: ({ color }) => <span style={{ color }}>🎥</span>,
+          tabBarIcon: ({ color, size }) => <Ionicons name="play-circle" size={size} color={color} />,
         }}
       />
       <Tab.Screen
@@ -51,7 +52,7 @@ const WorkerTabNavigator = () => {
         component={ReportsScreen}
         options={{
           tabBarLabel: 'Reports',
-          tabBarIcon: ({ color }) => <span style={{ color }}>📊</span>,
+          tabBarIcon: ({ color, size }) => <Ionicons name="bar-chart" size={size} color={color} />,
         }}
       />
       <Tab.Screen
@@ -59,7 +60,7 @@ const WorkerTabNavigator = () => {
         component={ProfileScreen}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color }) => <span style={{ color }}>👤</span>,
+          tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
         }}
       />
     </Tab.Navigator>

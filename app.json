@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "Minors",
-    "slug": "Minors",
+    "name": "MineLy",
+    "slug": "MineLy",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "scheme": "minors",
+    "scheme": "mineLy",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.minors"

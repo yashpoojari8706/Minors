@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { Button, Input, Card } from '../../../components/ui';
 import { useAuthMock } from '../../../hooks';
 import { USER_ROLES, UserRole } from '../../../config/roles';
@@ -11,22 +13,49 @@ interface LoginScreenProps {
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
-  const [selectedRole, setSelectedRole] = useState<UserRole>(USER_ROLES.WORKER);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuthMock();
 
+  // Demo credentials
+  const DEMO_CREDENTIALS = {
+    admin: { password: 'password', role: USER_ROLES.ADMIN },
+    worker: { password: 'password', role: USER_ROLES.WORKER },
+    supervisor: { password: 'password', role: USER_ROLES.SUPERVISOR },
+    safety: { password: 'password', role: USER_ROLES.SAFETY_OFFICER },
+  };
+
   const handleLogin = async () => {
+    if (!username.trim() || !password.trim()) {
+      Alert.alert('Error', 'Please enter both username and password');
+      return;
+    }
+
     setIsLoading(true);
-    trackEvent('login_attempt', { role: selectedRole });
+    trackEvent('login_attempt', { username });
 
     try {
-      const success = await login(selectedRole);
+      // Check demo credentials
+      const credentials = DEMO_CREDENTIALS[username.toLowerCase() as keyof typeof DEMO_CREDENTIALS];
+      console.log('Login attempt - username:', username, 'credentials found:', !!credentials);
       
-      if (success) {
-        trackLogin('role_selection', selectedRole);
-        // Navigation will be handled by the auth state change
+      if (credentials && credentials.password === password) {
+        console.log('Credentials valid, attempting login with role:', credentials.role);
+        const success = await login(credentials.role);
+        console.log('Login result:', success);
+        
+        if (success) {
+          trackLogin('username_password', credentials.role);
+          console.log('Login successful, navigating to Main...');
+          // Navigate to Main screen after successful login
+          navigation.navigate('Main');
+        } else {
+          Alert.alert('Login Failed', 'Please try again');
+        }
       } else {
-        Alert.alert('Login Failed', 'Please try again');
+        Alert.alert('Invalid Credentials', 'Please check your username and password');
       }
     } catch (error) {
       Alert.alert('Error', 'An error occurred during login');
@@ -35,102 +64,100 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     }
   };
 
-  const roleOptions = [
-    {
-      value: USER_ROLES.WORKER,
-      label: 'Mine Worker',
-      description: 'Underground operations, equipment handling',
-      icon: '⛏️',
-    },
-    {
-      value: USER_ROLES.SUPERVISOR,
-      label: 'Supervisor',
-      description: 'Team management, work coordination',
-      icon: '👷‍♂️',
-    },
-    {
-      value: USER_ROLES.SAFETY_OFFICER,
-      label: 'Safety Officer',
-      description: 'Safety compliance, incident management',
-      icon: '🦺',
-    },
-    {
-      value: USER_ROLES.ADMIN,
-      label: 'Administrator',
-      description: 'System management, analytics',
-      icon: '👨‍💼',
-    },
-  ];
+  const navigateToSignup = () => {
+    Alert.alert('Coming Soon', 'Signup functionality will be available in the next version');
+  };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <View style={styles.header}>
-        <View style={styles.logoContainer}>
-          <Text style={styles.logo}>⛏️</Text>
-          <Text style={styles.appName}>MineLy</Text>
-        </View>
-        <Text style={styles.tagline}>Making Mining Safer, One Day at a Time</Text>
-        <Text style={styles.subtitle}>{t('auth.welcome')}</Text>
-      </View>
-
-      <Card style={styles.loginCard}>
-        <Text style={styles.sectionTitle}>{t('auth.selectRole')}</Text>
-        <Text style={styles.sectionSubtitle}>
-          Choose your role to access personalized safety features
-        </Text>
-
-        <View style={styles.roleOptions}>
-          {roleOptions.map((option) => (
-            <Button
-              key={option.value}
-              title={`${option.icon} ${option.label}`}
-              onPress={() => setSelectedRole(option.value)}
-              variant={selectedRole === option.value ? 'primary' : 'secondary'}
-              style={[
-                styles.roleButton,
-                selectedRole === option.value && styles.selectedRole
-              ]}
-              textStyle={styles.roleButtonText}
-            />
-          ))}
-        </View>
-
-        {selectedRole && (
-          <View style={styles.roleDescription}>
-            <Text style={styles.roleDescriptionText}>
-              {roleOptions.find(r => r.value === selectedRole)?.description}
-            </Text>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <Ionicons name="construct" size={48} color="#FF6B35" />
+            <Text style={styles.appName}>MineLy</Text>
           </View>
-        )}
-
-        <Button
-          title={isLoading ? t('common.loading') : t('auth.login')}
-          onPress={handleLogin}
-          disabled={isLoading}
-          style={styles.loginButton}
-        />
-
-        <View style={styles.demoNotice}>
-          <Text style={styles.demoText}>
-            🚀 Demo Mode: All roles available for testing
-          </Text>
+          <Text style={styles.tagline}>Making Mining Safer, One Day at a Time</Text>
+          <Text style={styles.subtitle}>Welcome Back</Text>
         </View>
-      </Card>
 
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          Developed for Indian Mining Safety Compliance
-        </Text>
-        <Text style={styles.versionText}>Version 1.0.0 - Phase 1</Text>
-      </View>
-    </ScrollView>
+        <Card style={styles.loginCard}>
+          <Text style={styles.sectionTitle}>Sign In</Text>
+          <Text style={styles.sectionSubtitle}>
+            Enter your credentials to access your safety dashboard
+          </Text>
+
+          <Input
+            label="Username"
+            value={username}
+            onChangeText={setUsername}
+            placeholder="Enter your username"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+
+          <View style={styles.passwordContainer}>
+            <Input
+              label="Password"
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Enter your password"
+              secureTextEntry={!showPassword}
+              autoCapitalize="none"
+              autoCorrect={false}
+              containerStyle={styles.passwordInput}
+            />
+            <TouchableOpacity
+              style={styles.eyeIcon}
+              onPress={() => setShowPassword(!showPassword)}
+            >
+              <Ionicons
+                name={showPassword ? "eye-off" : "eye"}
+                size={24}
+                color="#666"
+              />
+            </TouchableOpacity>
+          </View>
+
+          <Button
+            title={isLoading ? 'Signing In...' : 'Sign In'}
+            onPress={handleLogin}
+            disabled={isLoading || !username.trim() || !password.trim()}
+            style={styles.loginButton}
+          />
+
+          <TouchableOpacity onPress={navigateToSignup} style={styles.signupLink}>
+            <Text style={styles.signupText}>
+              Don't have an account? <Text style={styles.signupTextBold}>Sign Up</Text>
+            </Text>
+          </TouchableOpacity>
+
+          <View style={styles.demoNotice}>
+            <Text style={styles.demoTitle}>Demo Credentials:</Text>
+            <Text style={styles.demoText}>admin / password (Admin)</Text>
+            <Text style={styles.demoText}>worker / password (Worker)</Text>
+            <Text style={styles.demoText}>supervisor / password (Supervisor)</Text>
+            <Text style={styles.demoText}>safety / password (Safety Officer)</Text>
+          </View>
+        </Card>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>
+            Developed for Indian Mining Safety Compliance
+          </Text>
+          <Text style={styles.versionText}>Version 1.0.0 - Phase 1</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#F5F7FA',
+  },
+  container: {
+    flex: 1,
   },
   contentContainer: {
     flexGrow: 1,
@@ -210,9 +237,33 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'italic',
   },
+  passwordContainer: {
+    position: 'relative',
+  },
+  passwordInput: {
+    flex: 1,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 16,
+    top: 40,
+    zIndex: 1,
+  },
   loginButton: {
     marginTop: 8,
     paddingVertical: 16,
+  },
+  signupLink: {
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  signupText: {
+    fontSize: 14,
+    color: '#666',
+  },
+  signupTextBold: {
+    color: '#FF6B35',
+    fontWeight: '600',
   },
   demoNotice: {
     marginTop: 20,
@@ -222,11 +273,16 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: '#2196F3',
   },
-  demoText: {
+  demoTitle: {
     fontSize: 12,
     color: '#1976D2',
-    textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  demoText: {
+    fontSize: 11,
+    color: '#1976D2',
+    marginBottom: 2,
   },
   footer: {
     alignItems: 'center',

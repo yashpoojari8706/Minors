@@ -26,26 +26,16 @@ export const useAuthMock = () => {
   useEffect(() => {
     // Simulate checking for existing session
     const checkAuthStatus = async () => {
-      // Simulate network delay
+      // Simulate network delay for splash screen
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Check if there's a stored user (in real app, this would be AsyncStorage or secure storage)
-      const storedRole = 'worker'; // Default to worker for demo
-      
-      if (storedRole && MOCK_USERS[storedRole as keyof typeof MOCK_USERS]) {
-        const user = MOCK_USERS[storedRole as keyof typeof MOCK_USERS];
-        setAuthState({
-          user,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-      } else {
-        setAuthState({
-          user: null,
-          isAuthenticated: false,
-          isLoading: false,
-        });
-      }
+      // For demo purposes, always start unauthenticated to show login flow
+      // In a real app, this would check AsyncStorage or secure storage for saved credentials
+      setAuthState({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+      });
     };
 
     checkAuthStatus();
@@ -55,22 +45,27 @@ export const useAuthMock = () => {
     try {
       setAuthState(prev => ({ ...prev, isLoading: true }));
       
-      // Simulate network request
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Simulate network request (reduced delay for better UX)
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       const user = MOCK_USERS[role];
+      console.log('Login attempt for role:', role, 'User found:', !!user);
+      
       if (user) {
         setAuthState({
           user,
           isAuthenticated: true,
           isLoading: false,
         });
+        console.log('Login successful, auth state updated');
         return true;
       }
       
+      console.log('Login failed - user not found');
       setAuthState(prev => ({ ...prev, isLoading: false }));
       return false;
     } catch (error) {
+      console.log('Login error:', error);
       setAuthState(prev => ({ ...prev, isLoading: false }));
       return false;
     }

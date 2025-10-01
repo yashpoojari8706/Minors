@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuthMock } from '../../../hooks';
 import { trackScreenView } from '../../../utils/analytics';
 
@@ -46,7 +48,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ navigation }) => {
   }, [isLoading, isAuthenticated, navigation]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Animated.View 
         style={[
           styles.content,
@@ -56,7 +58,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ navigation }) => {
           },
         ]}
       >
-        <Text style={styles.logo}>⛏️</Text>
+        <Ionicons name="construct" size={80} color="#FFFFFF" />
         <Text style={styles.appName}>MineLy</Text>
         <Text style={styles.tagline}>Making Mining Safer</Text>
         
@@ -73,7 +75,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ navigation }) => {
           Powered by AI • Built for Indian Mining
         </Text>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

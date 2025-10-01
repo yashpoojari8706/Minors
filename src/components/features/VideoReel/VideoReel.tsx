@@ -26,7 +26,6 @@ export const VideoReel: React.FC<VideoReelProps> = ({
           <Image 
             source={{ uri: thumbnail }} 
             style={styles.thumbnail}
-            defaultSource={require('../../../assets/video-placeholder.png')}
           />
           <View style={styles.overlay}>
             <View style={styles.playButton}>

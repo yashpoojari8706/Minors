@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Card, SkeletonLoader } from '../../../components/ui';
 import { Checklist, VideoReel } from '../../../components/features';
 import { useAuthMock, useNetworkStatus } from '../../../hooks';
@@ -88,36 +89,39 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({ navigation }) 
 
   if (isLoading) {
     return (
-      <ScrollView style={styles.container}>
-        <View style={styles.header}>
-          <SkeletonLoader width="60%" height={24} />
-          <SkeletonLoader width="40%" height={16} style={{ marginTop: 8 }} />
-        </View>
-        <SkeletonLoader width="100%" height={200} style={{ margin: 16 }} />
-        <SkeletonLoader width="100%" height={150} style={{ margin: 16 }} />
-        <SkeletonLoader width="100%" height={100} style={{ margin: 16 }} />
-      </ScrollView>
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView style={styles.container}>
+          <View style={styles.header}>
+            <SkeletonLoader width="60%" height={24} />
+            <SkeletonLoader width="40%" height={16} style={{ marginTop: 8 }} />
+          </View>
+          <SkeletonLoader width="100%" height={200} style={{ margin: 16 }} />
+          <SkeletonLoader width="100%" height={150} style={{ margin: 16 }} />
+          <SkeletonLoader width="100%" height={100} style={{ margin: 16 }} />
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ScrollView 
-      style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView 
+        style={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.greeting}>
-          {getGreeting()}, {user?.name?.split(' ')[0]}! 👋
+          {getGreeting()}, {user?.name?.split(' ')[0]}!
         </Text>
         <Text style={styles.subtitle}>
           {user?.department} • {user?.shift} Shift
         </Text>
         {!isConnected && (
           <View style={styles.offlineIndicator}>
-            <Text style={styles.offlineText}>📶 Offline Mode</Text>
+            <Text style={styles.offlineText}>Offline Mode</Text>
           </View>
         )}
       </View>
@@ -149,13 +153,13 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({ navigation }) 
         <Text style={styles.sectionTitle}>{t('dashboard.quickActions')}</Text>
         <View style={styles.actionButtons}>
           <Button
-            title="🚨 Report Hazard"
+            title="Report Hazard"
             onPress={handleReportHazard}
             variant="danger"
             style={styles.actionButton}
           />
           <Button
-            title="📋 View All Checklists"
+            title="View All Checklists"
             onPress={() => navigation.navigate('DailyChecklist')}
             variant="secondary"
             style={styles.actionButton}
@@ -163,13 +167,13 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({ navigation }) 
         </View>
         <View style={styles.actionButtons}>
           <Button
-            title="🎥 Browse Videos"
+            title="Browse Videos"
             onPress={() => navigation.navigate('Videos')}
             variant="secondary"
             style={styles.actionButton}
           />
           <Button
-            title="📊 My Reports"
+            title="My Reports"
             onPress={() => navigation.navigate('Reports')}
             variant="secondary"
             style={styles.actionButton}
@@ -186,8 +190,13 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({ navigation }) 
             <Text style={styles.statLabel}>Days Safe</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>95%</Text>
-            <Text style={styles.statLabel}>Checklist Rate</Text>
+            <Text style={[
+              styles.statNumber, 
+              { color: checklist?.completionPercentage >= 100 ? '#4CAF50' : '#FF6B35' }
+            ]}>
+              {checklist?.completionPercentage ? Math.round(checklist.completionPercentage) : 0}%
+            </Text>
+            <Text style={styles.statLabel}>Today's Checklist</Text>
           </View>
           <View style={styles.statItem}>
             <Text style={styles.statNumber}>8</Text>
@@ -199,14 +208,18 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({ navigation }) 
           </View>
         </View>
       </Card>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#F5F7FA',
+  },
+  container: {
+    flex: 1,
   },
   header: {
     padding: 20,

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Card, Input } from '../../../components/ui';
 import { useAuthMock } from '../../../hooks';
 import { trackScreenView, trackUserAction } from '../../../utils/analytics';
@@ -72,7 +73,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
   const languages = i18n.getAvailableLanguages();
 
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
       {/* User Info */}
       <Card style={styles.userCard}>
         <View style={styles.userHeader}>
@@ -219,20 +221,24 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
       {/* Logout */}
       <Card style={styles.logoutCard}>
         <Button
-          title="🚪 Logout"
+          title="Logout"
           onPress={handleLogout}
           variant="danger"
           style={styles.logoutButton}
         />
       </Card>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#F5F7FA',
+  },
+  container: {
+    flex: 1,
   },
   userCard: {
     margin: 16,
