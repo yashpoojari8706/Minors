@@ -22,25 +22,30 @@ interface VideoItem {
 
 interface VideoFeedProps {
   videos: VideoItem[];
+  isScreenFocused: boolean;
 }
 
 interface VideoPlayerProps {
   item: VideoItem;
   isActive: boolean;
   index: number;
+  isScreenFocused: boolean;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ item, isActive, index }) => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ item, isActive, index, isScreenFocused }) => {
   const videoRef = useRef<Video>(null);
   const [status, setStatus] = useState<any>({});
 
   useEffect(() => {
-    if (isActive && videoRef.current) {
+    // Only play video if both active AND screen is focused
+    if (isActive && isScreenFocused && videoRef.current) {
+      console.log(`Video ${index} starting playback - screen focused and active`);
       videoRef.current.playAsync();
     } else if (videoRef.current) {
+      console.log(`Video ${index} pausing - isActive: ${isActive}, isScreenFocused: ${isScreenFocused}`);
       videoRef.current.pauseAsync();
     }
-  }, [isActive]);
+  }, [isActive, isScreenFocused]);
 
   const handlePlaybackStatusUpdate = (status: any) => {
     setStatus(status);
@@ -50,15 +55,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ item, isActive, index }) => {
       console.error(`Video ${index} error:`, status.error);
     }
     
-    // Auto-replay when video ends
-    if (status.didJustFinish && isActive) {
+    // Auto-replay when video ends (only if screen is focused)
+    if (status.didJustFinish && isActive && isScreenFocused) {
       console.log(`Video ${index} finished, replaying...`);
       videoRef.current?.replayAsync();
     }
   };
 
   const togglePlayPause = () => {
-    console.log(`Video ${index} toggle - current status:`, { isPlaying: status.isPlaying, isLoaded: status.isLoaded });
+    console.log(`Video ${index} toggle - current status:`, { 
+      isPlaying: status.isPlaying, 
+      isLoaded: status.isLoaded,
+      isScreenFocused,
+      isActive
+    });
+    
+    // Only allow play/pause if screen is focused
+    if (!isScreenFocused) {
+      console.log(`Video ${index} toggle ignored - screen not focused`);
+      return;
+    }
     
     if (status.isPlaying) {
       videoRef.current?.pauseAsync();
@@ -67,7 +83,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ item, isActive, index }) => {
     }
   };
 
-  console.log(`Video ${index} rendering - URI:`, item.uri, 'isActive:', isActive);
+  // console.log(`Video ${index} rendering - URI:`, item.uri, 'isActive:', isActive);
 
   return (
     <View style={styles.videoContainer}>
@@ -111,7 +127,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ item, isActive, index }) => {
   );
 };
 
-export const VideoFeed: React.FC<VideoFeedProps> = ({ videos }) => {
+export const VideoFeed: React.FC<VideoFeedProps> = ({ videos, isScreenFocused }) => {
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [infiniteVideos, setInfiniteVideos] = useState<VideoItem[]>([]);
   const flatListRef = useRef<FlatList>(null);
@@ -152,6 +168,7 @@ export const VideoFeed: React.FC<VideoFeedProps> = ({ videos }) => {
       item={item}
       isActive={index === activeVideoIndex}
       index={index}
+      isScreenFocused={isScreenFocused}
     />
   );
 

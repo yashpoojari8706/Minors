@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Asset } from 'expo-asset';
+import { useFocusEffect } from '@react-navigation/native';
 import { VideoFeed } from '../../../components/features';
 import { trackScreenView } from '../../../utils/analytics';
 
@@ -16,11 +17,25 @@ interface VideoItem {
 
 export const VideoScreen: React.FC<VideoScreenProps> = ({ navigation }) => {
   const [videos, setVideos] = useState<VideoItem[]>([]);
+  const [isScreenFocused, setIsScreenFocused] = useState(false);
 
   useEffect(() => {
     trackScreenView('VideoScreen');
     loadVideos();
   }, []);
+
+  // Handle screen focus/blur for video optimization
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('VideoScreen focused - enabling video playback');
+      setIsScreenFocused(true);
+      
+      return () => {
+        console.log('VideoScreen blurred - disabling video playback');
+        setIsScreenFocused(false);
+      };
+    }, [])
+  );
 
   const loadVideos = async () => {
     try {
@@ -94,7 +109,7 @@ export const VideoScreen: React.FC<VideoScreenProps> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <VideoFeed videos={videos} />
+      <VideoFeed videos={videos} isScreenFocused={isScreenFocused} />
     </View>
   );
 };
