@@ -11,3 +11,4 @@ export * from './admin/AdminDashboard';
 export * from './common/ProfileScreen';
 export * from './common/ReportHazardScreen';
 export * from './common/VideoScreen';
+export * from './common/VideoOfTheDayScreen';

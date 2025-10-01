@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import { WorkerDashboard, ProfileScreen, ReportHazardScreen, VideoScreen } from '../screens';
+import { WorkerDashboard, ProfileScreen, ReportHazardScreen, VideoScreen, VideoOfTheDayScreen } from '../screens';
 import { NAVIGATION_ROUTES } from '../config';
 
 const Tab = createBottomTabNavigator();
@@ -69,19 +69,25 @@ const WorkerTabNavigator = () => {
 
 export const WorkerNavigator = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="WorkerTabs"
         component={WorkerTabNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name={NAVIGATION_ROUTES.REPORT_HAZARD}
+      <Stack.Screen 
+        name="ReportHazard" 
         component={ReportHazardScreen}
-        options={{
+        options={{ 
+          headerShown: true,
           title: 'Report Hazard',
-          headerStyle: { backgroundColor: '#FF6B35' },
-          headerTintColor: '#FFFFFF',
+        }}
+      />
+      <Stack.Screen 
+        name="VideoOfTheDay" 
+        component={VideoOfTheDayScreen}
+        options={{ 
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

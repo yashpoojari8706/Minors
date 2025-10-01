@@ -76,8 +76,9 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({ navigation }) 
   };
 
   const handleWatchVideo = () => {
-    trackUserAction('video_clicked', videoOfTheDay?.id);
-    navigation.navigate('VideoPlayer', { video: videoOfTheDay });
+    trackUserAction('video_watch');
+    // Navigate to dedicated video of the day screen
+    navigation.navigate('VideoOfTheDay');
   };
 
   const getGreeting = () => {
@@ -145,6 +146,7 @@ export const WorkerDashboard: React.FC<WorkerDashboardProps> = ({ navigation }) 
           category={videoOfTheDay.category}
           onPress={handleWatchVideo}
           isWatched={videoOfTheDay.isWatched}
+          isVideoOfTheDay={true}
         />
       )}
 
@@ -222,8 +224,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 10,
     paddingBottom: 10,
+    marginTop: 0,
   },
   greeting: {
     fontSize: 24,

@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import { SupervisorDashboard, ProfileScreen, ReportHazardScreen, VideoScreen } from '../screens';
+import { SupervisorDashboard, ProfileScreen, ReportHazardScreen, VideoScreen, VideoOfTheDayScreen } from '../screens';
 import { NAVIGATION_ROUTES } from '../config';
 
 const Tab = createBottomTabNavigator();

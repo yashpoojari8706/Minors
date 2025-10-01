@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { Video, ResizeMode } from 'expo-av';
+import { Asset } from 'expo-asset';
 import { Card } from '../../ui';
 
 interface VideoReelProps {
@@ -9,6 +11,7 @@ interface VideoReelProps {
   category: string;
   onPress: () => void;
   isWatched?: boolean;
+  isVideoOfTheDay?: boolean;
 }
 
 export const VideoReel: React.FC<VideoReelProps> = ({
@@ -18,15 +21,59 @@ export const VideoReel: React.FC<VideoReelProps> = ({
   category,
   onPress,
   isWatched = false,
+  isVideoOfTheDay = false,
 }) => {
+  const [videoThumbnail, setVideoThumbnail] = useState<string | null>(null);
+  const videoRef = useRef<Video>(null);
+
+  useEffect(() => {
+    if (isVideoOfTheDay) {
+      generateVideoThumbnail();
+    }
+  }, [isVideoOfTheDay]);
+
+  const generateVideoThumbnail = async () => {
+    try {
+      // Get a random video for thumbnail (simulating video of the day)
+      const videoFiles = [
+        require('../../../assets/feed/vdo1.mp4'),
+        require('../../../assets/feed/vdo2.mp4'),
+        require('../../../assets/feed/vdo3.mp4'),
+        require('../../../assets/feed/vdo4.mp4'),
+        require('../../../assets/feed/vdo5.mp4'),
+      ];
+      
+      const randomIndex = Math.floor(Math.random() * videoFiles.length);
+      const selectedVideo = Asset.fromModule(videoFiles[randomIndex]);
+      await selectedVideo.downloadAsync();
+      
+      // Use the video URI as thumbnail (first frame will be shown when video loads)
+      setVideoThumbnail(selectedVideo.localUri || selectedVideo.uri);
+    } catch (error) {
+      console.error('Error generating video thumbnail:', error);
+      setVideoThumbnail(null);
+    }
+  };
   return (
     <Card style={styles.container}>
       <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
         <View style={styles.thumbnailContainer}>
-          <Image 
-            source={{ uri: thumbnail }} 
-            style={styles.thumbnail}
-          />
+          {isVideoOfTheDay && videoThumbnail ? (
+            <Video
+              ref={videoRef}
+              source={{ uri: videoThumbnail }}
+              style={styles.thumbnail}
+              resizeMode={ResizeMode.COVER}
+              shouldPlay={false}
+              useNativeControls={false}
+              positionMillis={1000} // Show frame at 1 second
+            />
+          ) : (
+            <Image 
+              source={{ uri: thumbnail }} 
+              style={styles.thumbnail}
+            />
+          )}
           <View style={styles.overlay}>
             <View style={styles.playButton}>
               <Text style={styles.playIcon}>▶</Text>
@@ -38,6 +85,11 @@ export const VideoReel: React.FC<VideoReelProps> = ({
           {isWatched && (
             <View style={styles.watchedBadge}>
               <Text style={styles.watchedText}>✓</Text>
+            </View>
+          )}
+          {isVideoOfTheDay && (
+            <View style={styles.videoOfTheDayBadge}>
+              <Text style={styles.videoOfTheDayText}>TODAY</Text>
             </View>
           )}
         </View>
@@ -135,5 +187,20 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
     lineHeight: 22,
+  },
+  videoOfTheDayBadge: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    backgroundColor: '#FF6B35',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  videoOfTheDayText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
 });

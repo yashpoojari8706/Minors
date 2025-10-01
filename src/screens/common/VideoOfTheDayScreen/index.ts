@@ -1,0 +1,1 @@
+export { VideoOfTheDayScreen } from './VideoOfTheDayScreen';
