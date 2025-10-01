@@ -17,10 +17,35 @@ SplashScreen.preventAutoHideAsync();
 
 const prefix = createURL('/');
 
+// Custom theme for MineLy
+const MinelyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#FF6B35',
+    background: '#F5F7FA',
+    card: '#FFFFFF',
+    text: '#333333',
+    border: '#E0E0E0',
+  },
+};
+
+const MinelyDarkTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    primary: '#FF6B35',
+    background: '#1A1A1A',
+    card: '#2D2D2D',
+    text: '#FFFFFF',
+    border: '#404040',
+  },
+};
+
 export function App() {
   const colorScheme = useColorScheme();
 
-  const theme = colorScheme === 'dark' ? DarkTheme : DefaultTheme
+  const theme = colorScheme === 'dark' ? MinelyDarkTheme : MinelyTheme;
 
   return (
     <Navigation
