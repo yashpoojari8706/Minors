@@ -19,17 +19,7 @@ export const AppNavigator: React.FC<AppNavigatorProps> = ({
   linking, 
   onReady 
 }) => {
-  const authData = useAuthMock();
-  const { isAuthenticated, isLoading, user } = authData;
-  const [forceUpdate, setForceUpdate] = useState(0);
-  
-  console.log('AppNavigator render - isAuthenticated:', isAuthenticated, 'isLoading:', isLoading, 'user:', user?.name);
-  
-  useEffect(() => {
-    console.log('AppNavigator useEffect - Auth state changed:', { isAuthenticated, isLoading, user: user?.name });
-    // Force a re-render when auth state changes
-    setForceUpdate(prev => prev + 1);
-  }, [isAuthenticated, isLoading, user]);
+  const { isAuthenticated, isLoading } = useAuthMock();
 
   const handleNavigationStateChange = (state: any) => {
     // Track screen views automatically

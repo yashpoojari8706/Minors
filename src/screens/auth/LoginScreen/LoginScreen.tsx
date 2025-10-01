@@ -39,16 +39,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     try {
       // Check demo credentials
       const credentials = DEMO_CREDENTIALS[username.toLowerCase() as keyof typeof DEMO_CREDENTIALS];
-      console.log('Login attempt - username:', username, 'credentials found:', !!credentials);
       
       if (credentials && credentials.password === password) {
-        console.log('Credentials valid, attempting login with role:', credentials.role);
         const success = await login(credentials.role);
-        console.log('Login result:', success);
         
         if (success) {
           trackLogin('username_password', credentials.role);
-          console.log('Login successful, navigating to Main...');
           // Navigate to Main screen after successful login
           navigation.navigate('Main');
         } else {

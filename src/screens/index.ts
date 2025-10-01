@@ -10,3 +10,4 @@ export * from './admin/AdminDashboard';
 // Common screens
 export * from './common/ProfileScreen';
 export * from './common/ReportHazardScreen';
+export * from './common/VideoScreen';

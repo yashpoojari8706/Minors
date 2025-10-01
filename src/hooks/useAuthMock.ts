@@ -49,7 +49,6 @@ export const useAuthMock = () => {
       await new Promise(resolve => setTimeout(resolve, 500));
       
       const user = MOCK_USERS[role];
-      console.log('Login attempt for role:', role, 'User found:', !!user);
       
       if (user) {
         setAuthState({
@@ -57,11 +56,8 @@ export const useAuthMock = () => {
           isAuthenticated: true,
           isLoading: false,
         });
-        console.log('Login successful, auth state updated');
         return true;
       }
-      
-      console.log('Login failed - user not found');
       setAuthState(prev => ({ ...prev, isLoading: false }));
       return false;
     } catch (error) {

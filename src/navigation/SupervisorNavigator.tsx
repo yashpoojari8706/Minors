@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import { SupervisorDashboard, ProfileScreen, ReportHazardScreen } from '../screens';
+import { SupervisorDashboard, ProfileScreen, ReportHazardScreen, VideoScreen } from '../screens';
 import { NAVIGATION_ROUTES } from '../config';
 
 const Tab = createBottomTabNavigator();
@@ -55,7 +55,7 @@ const SupervisorTabNavigator = () => {
       />
       <Tab.Screen
         name={NAVIGATION_ROUTES.VIDEOS}
-        component={VideosScreen}
+        component={VideoScreen}
         options={{
           tabBarLabel: 'Videos',
           tabBarIcon: ({ color, size }) => <Ionicons name="play-circle" size={size} color={color} />,
